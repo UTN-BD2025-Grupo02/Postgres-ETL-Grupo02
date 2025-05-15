@@ -1,0 +1,67 @@
+services:
+  db:
+  
+    image: postgres
+    container_name: postgres_db_etl
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    
+    env_file:
+      - .env
+      
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+      - ./initdb:/docker-entrypoint-initdb.d
+
+      - ./config:/etc/postgresql/custom
+
+      - ./datos:/datos 
+
+    command: postgres -c config_file=/etc/postgresql/custom/postgresql.conf
+
+    
+    healthcheck:
+      # Prueba de salud para el contenedor
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_etl
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  superset:
+    image: apache/superset:4.0.0
+    container_name: superset_etl
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./init.sh:/script.sh
+    
+
+    ports:
+      - 8088:8088
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  pgadmin_data:
