@@ -1,4 +1,4 @@
-# **ETL para la carga de *`datasets`* de DENGUE en Argentina**
+# **ETL para la carga de *`datasets`* de DISTRIBUCIÓN GEOGRÁFICA DE LOS ESTABLECIMIENTOS PRODUCTIVOS en Argentina**
 
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -42,17 +42,112 @@ El código proporcionado se ofrece "tal cual", sin garantía de ningún tipo, ex
 
 Este proyecto implementa un proceso ETL (Extract, Transform, Load) para la carga y análisis de datos relacionados con la Distribución geográfica de los establecimientos productivos en Argentina. Utiliza herramientas modernas como Docker, PostgreSQL, Apache Superset y pgAdmin para facilitar la gestión, análisis y visualización de datos.
 
-El objetivo principal es proporcionar una solución escalable y reproducible para analizar datos de Distribución geográfica de los establecimientos productivos por grupo departamento, provincia y tipo de actividad, permitiendo la creación de tableros interactivos y gráficos personalizados.
+El objetivo principal es proporcionar una solución escalable y reproducible para analizar datos de distribución geográfica de los establecimientos productivos por grupo departamento, provincia y tipo de actividad, permitiendo la creación de tableros interactivos y gráficos personalizados.
 
+## **Características Principales**
 
+- **Infraestructura Contenerizada:** Uso de Docker para simplificar la configuración y despliegue.
+- **Base de Datos Relacional:** PostgreSQL para almacenar y gestionar los datos.
+- **Visualización de Datos:** Apache Superset para crear gráficos y tableros interactivos.
+- **Gestión de Base de Datos:** pgAdmin para administrar y consultar la base de datos.
 
+## **Requisitos Previos**
 
+Antes de comenzar, asegúrate de tener instalados los siguientes componentes:
 
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- Navegador web para acceder a Apache Superset y pgAdmin.
 
+## **Servicios Definidos en Docker Compose**
 
+El archivo `docker-compose.yml` define los siguientes servicios:
 
+1. **Base de Datos (PostgreSQL):**
+   - Imagen: `postgres:alpine`
+   - Puertos: `5432:5432`
+   - Volúmenes:
+     - `postgres-db:/var/lib/postgresql/data` (almacenamiento persistente de datos)
+     - `./scripts:/docker-entrypoint-initdb.d` (scripts de inicialización)
+     - `./datos:/datos` (directorio para datos adicionales)
+   - Variables de entorno:
+     - Configuradas en el archivo `.env.db`
+   - Healthcheck: 
+     - Comando: `pg_isready`
+     - Intervalo: 10 segundos
+     - Retries: 5
 
+2. **Apache Superset:**
+   - Imagen: `apache/superset:4.0.0`
+   - Puertos: `8088:8088`
+   - Dependencias:
+     - Depende del servicio `db` y espera a que esté saludable.
+   - Variables de entorno:
+     - Configuradas en el archivo `.env.db`
 
+3. **pgAdmin:**
+   - Imagen: `dpage/pgadmin4`
+   - Puertos: `5050:80`
+   - Dependencias:
+     - Depende del servicio `db` y espera a que esté saludable.
+   - Variables de entorno:
+     - Configuradas en el archivo `.env.db`
+
+## **Instrucciones de Configuración**
+
+1. **Clonar el repositorio:**
+   ```sh
+   git clone <URL_DEL_REPOSITORIO>
+   cd postgres-etl
+   ```
+
+2. **Configurar el archivo `.env.db`:**
+   Crea un archivo `.env.db` en la raíz del proyecto con las siguientes variables de entorno:
+   ```env
+    #Definimos cada variable
+    DATABASE_HOST=db
+    DATABASE_PORT=5432
+    DATABASE_NAME=postgres
+    DATABASE_USER=postgres
+    DATABASE_PASSWORD=postgres
+    POSTGRES_INITDB_ARGS="--auth-host=scram-sha-256 --auth-local=trust"
+    # Configuracion para inicializar postgres
+    POSTGRES_PASSWORD=postgres
+    PGUSER=postgres
+    # Configuracion para inicializar pgadmin
+    PGADMIN_DEFAULT_EMAIL=admin@ejemplo.com
+    PGADMIN_DEFAULT_PASSWORD=admin123
+    # Configuracion para inicializar superset
+    SUPERSET_SECRET_KEY=123456789
+   ```
+  
+3. **Levantar los servicios:**
+   Ejecuta los siguientes comandos para iniciar los contenedores:
+   ```sh
+   docker compose up -d
+   . init.sh
+   ```
+
+4. **Acceso a las herramientas:**
+   - **Apache Superset:** [http://localhost:8088/](http://localhost:8088/)  
+     Credenciales predeterminadas: ***`admin/admin`***
+   - **pgAdmin:** [http://localhost:5050/](http://localhost:5050/)  
+     Configura la conexión a PostgreSQL utilizando las credenciales definidas en el archivo `.env.db`.
+
+## **Uso del Proyecto**
+
+### **1. Configuración de la Base de Datos**
+
+Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en la sección ***`Settings`***. Asegúrate de que la conexión sea exitosa antes de proceder.
+
+### **2. Consultas SQL**
+
+#### **Consulta 1: Tipo de actividades según departamento**
+1. buscar en departamento el id provincia
+2. en otra tabla, buscar el in_departamento de la provicnia anterior
+3. ver que coincida la cla2 y clae6 de la tabla anterior
+#### **Consulta 2: Consultar proporcioón mujeres**
+#### **Consulta 3: 
 
 
 
