@@ -11,8 +11,8 @@ CREATE TABLE public.provincia (
     id INTEGER PRIMARY KEY,
     nombre VARCHAR,
     nombre_completo VARCHAR,
-    centroide_lat DOUBLE PRECISION,
-    centroide_lon DOUBLE PRECISION,
+    centroide_lat FLOAT,
+    centroide_lon FLOAT,
     fuente VARCHAR,
     iso_id VARCHAR,
     iso_nombre VARCHAR,
@@ -38,8 +38,8 @@ CREATE TABLE public.distribucion_establecimientos(
     cuit VARCHAR,
     sucursal INTEGER,
     anio INTEGER,
-    lat DOUBLE PRECISION,
-    lon DOUBLE PRECISION,
+    lat FLOAT,
+    lon FLOAT,
     clae6 INTEGER,
     in_departamentos INTEGER,
     provincia_id INTEGER,
@@ -71,10 +71,10 @@ CREATE TEMP TABLE temp_departamento(
     provincia_id VARCHAR,
     in_departamentos VARCHAR,
     departamento VARCHAR,
-    provincia VARCHAR,
+    provincia VARCHAR
 );
 
-CREATE TEMP TABLE tmep_actividades_establecimientos(
+CREATE TEMP TABLE temp_actividades_establecimientos (
     clae6 VARCHAR,
     clae2 VARCHAR,
     letra VARCHAR,
@@ -112,14 +112,14 @@ COPY temp_distribucion_establecimientos
 
 
 INSERT INTO public.provincia(
-   id, nombre, nombre_completo, centroid_lat, centroid_lon, fuente, iso_id, iso_nombre, categoria 
+   id, nombre, nombre_completo, centroide_lat, centroide_lon, fuente, iso_id, iso_nombre, categoria 
 )
 SELECT
 id:: INTEGER,
 nombre,
 nombre_completo,
-centroid_lat:: DOUBLE PRECISION,
-centroid_lon:: DOUBLE PRECISION,
+centroide_lat:: FLOAT,
+centroide_lon:: FLOAT,
 fuente,
 iso_id,
 iso_nombre,
@@ -129,12 +129,12 @@ FROM temp_provincia;
 
 
 INSERT INTO public.departamento(
-    id, nombre, provincia_id 
+    id, nombre, provincia_id
 )
 SELECT
-in_departamentos:: INTEGER,
+in_departamentos:: INTEGER, 
 departamento,
-provincia_id:: INTEGER 
+provincia_id:: INTEGER
 FROM temp_departamento;
 
 
@@ -160,8 +160,8 @@ SELECT
 cuit,
 sucursal:: INTEGER,
 anio:: INTEGER,
-lat:: DOUBLE PRECISION,
-lon:: DOUBLE PRECISION,
+lat:: FLOAT,
+lon:: FLOAT,
 clae6:: INTEGER,
 in_departamentos:: INTEGER,
 provincia_id:: INTEGER,
