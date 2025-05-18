@@ -24,3 +24,4 @@ Luego de configurar el archivo .env ejecute los siguientes comandos
   docker-compose up
   docker exec -it superset_etl bash -c "/script.sh"
 ```
+hola
