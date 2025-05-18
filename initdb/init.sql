@@ -1,84 +1,64 @@
-/*
-Borro las tablas si existen
-*/
-DROP TABLE IF EXISTS public.dengue;
+DROP TABLE IF EXISTS public.distribucion_elementos;
+
+DROP TABLE IF EXISTS public.actividades_establecimientos;
 
 DROP TABLE IF EXISTS public.departamento;
 
 DROP TABLE IF EXISTS public.provincia;
 
-/* Creo las tablas para la base de datos definitiva, respetando todas las formas normales
-Las formas normales son reglas que se aplican a las bases de datos relacionales para asegurar la integridad de los datos, evitar la redundancia y facilitar la eficiencia de las operaciones de la base de datos. Hay varias formas normales, cada una con sus propias reglas. Aquí están las tres primeras:
-1. Primera Forma Normal (1NF): Cada columna de una tabla debe contener valores atómicos (indivisibles) y cada valor en una columna debe ser del mismo tipo. Además, cada fila debe ser única.
-2. Segunda Forma Normal (2NF): Se aplica a las bases de datos con claves primarias compuestas (más de un campo en la clave primaria). Para cumplir con la 2NF, todos los campos no clave de la tabla deben depender de toda la clave primaria, no solo de una parte de ella.
-3. Tercera Forma Normal (3NF): Una tabla está en 3NF si está en 2NF y además, los campos no clave no deben tener dependencias entre sí. Es decir, cada campo no clave debe depender solo de la clave primaria.
-Existen formas normales más avanzadas como la Cuarta Forma Normal (4NF), Quinta Forma Normal (5NF) o la Forma Normal de Boyce-Codd (BCNF), pero las tres primeras son las más utilizadas y suelen ser suficientes para la mayoría de las aplicaciones.
-*/
-CREATE TABLE public.dengue (
-    id serial,
-    evento VARCHAR,
-    anio BIGINT,
-    grupo_etario VARCHAR,
-    cantidad BIGINT,
-    departamento_id BIGINT
-);
-
-CREATE TABLE public.departamento (
-    id BIGINT,
-    nombre VARCHAR,
-    nombre_completo VARCHAR,
-    centroide_lat FLOAT,
-    centroide_lon FLOAT,
-    categoria VARCHAR,
-    provincia_id BIGINT
-);
 
 CREATE TABLE public.provincia (
-    id BIGINT,
+    id INTEGER PRIMARY KEY,
     nombre VARCHAR,
     nombre_completo VARCHAR,
-    centroide_lat FLOAT,
-    centroide_lon FLOAT,
+    centroide_lat DOUBLE PRECISION,
+    centroide_lon DOUBLE PRECISION,
+    fuente VARCHAR,
+    iso_id VARCHAR,
+    iso_nombre VARCHAR,
     categoria VARCHAR
 );
 
-/*
-Agrego las restricciones de clave primaria y foránea a las tablas
-*/
-ALTER TABLE public.dengue ADD CONSTRAINT pk_dengue PRIMARY KEY (id);
-
-ALTER TABLE public.provincia
-ADD CONSTRAINT pk_provincia PRIMARY KEY (id);
-
-ALTER TABLE public.departamento
-ADD CONSTRAINT pk_departamento PRIMARY KEY (id);
-
-ALTER TABLE public.departamento
-ADD CONSTRAINT fk_departamento_provincia FOREIGN KEY (provincia_id) REFERENCES provincia (id);
-
-ALTER TABLE public.dengue
-ADD CONSTRAINT fk_dengue_departamento FOREIGN KEY (departamento_id) REFERENCES departamento (id);
-
-/*
-Creo las tablas temporales para cargar los datos
-*/
-CREATE TEMPORARY TABLE temp_departamentos (
-    categoria VARCHAR,
-    centroide_lat FLOAT,
-    centroide_lon FLOAT,
-    fuente VARCHAR,
-    id VARCHAR,
+CREATE TABLE public.departamento (
+    id INTEGER PRIMARY KEY,
     nombre VARCHAR,
-    nombre_completo VARCHAR,
-    provincia_id VARCHAR,
-    provincia_interseccion FLOAT,
-    provincia_nombre VARCHAR
+    provincia_id INTEGER REFERENCES public.provincia(id)
 );
 
-CREATE TEMPORARY TABLE provincias_temp (
+CREATE TABLE public.actividades_establecimientos (
+    clae6 INTEGER PRIMARY KEY,
+    clae2 INTEGER,
+    letra VARCHAR,
+    clae6_desc VARCHAR,
+    clae2_desc VARCHAR,
+    letra_desc VARCHAR
+);
+
+CREATE TABLE public.distribucion_establecimientos(
+    cuit VARCHAR,
+    sucursal INTEGER,
+    anio INTEGER,
+    lat DOUBLE PRECISION,
+    lon DOUBLE PRECISION,
+    clae6 INTEGER,
+    in_departamentos INTEGER,
+    provincia_id INTEGER,
+    quintil INTEGER,
+    empleo VARCHAR, 
+    proporcion_mujeres DOUBLE PRECISION,
+
+    PRIMARY KEY (cuit,sucursal,anio),
+    FOREIGN KEY (clae6) REFERENCES public.actividades_establecimientos(clae6),
+    FOREIGN KEY (in_departamentos) REFERENCES public.departamento(id),
+    FOREIGN KEY (provincia_id) REFERENCES public.provincia(id)
+);
+
+
+
+CREATE TEMP TABLE temp_provincia(
     categoria VARCHAR,
-    centroide_lat FLOAT,
-    centroide_lon FLOAT,
+    centroide_lat VARCHAR,
+    centroide_lon VARCHAR,
     fuente VARCHAR,
     id VARCHAR,
     iso_id VARCHAR,
@@ -87,108 +67,105 @@ CREATE TEMPORARY TABLE provincias_temp (
     nombre_completo VARCHAR
 );
 
-CREATE TEMPORARY TABLE temp_dengue (
-    id_depto_indec_residencia INT,
-    departamento_residencia VARCHAR(255),
-    id_prov_indec_residencia INT,
-    provincia_residencia VARCHAR(255),
-    anio_min INT,
-    evento VARCHAR(255),
-    id_grupo_etario INT,
-    grupo_etario VARCHAR(255),
-    sepi_min INT,
-    cantidad INT
+CREATE TEMP TABLE temp_departamento(
+    provincia_id VARCHAR,
+    in_departamentos VARCHAR,
+    departamento VARCHAR,
+    provincia VARCHAR,
 );
 
-/*
-Cargo los datos en las tablas temporales
-*/
-COPY provincias_temp
-FROM '/datos/provincias.csv' DELIMITER ',' CSV HEADER;
+CREATE TEMP TABLE tmep_actividades_establecimientos(
+    clae6 VARCHAR,
+    clae2 VARCHAR,
+    letra VARCHAR,
+    clae6_desc VARCHAR,
+    clae2_desc VARCHAR,
+    letra_desc VARCHAR
+);
 
-INSERT INTO
-    public.provincia (
-        id,
-        nombre,
-        nombre_completo,
-        centroide_lat,
-        centroide_lon,
-        categoria
-    )
+CREATE TEMP TABLE temp_distribucion_establecimientos(
+    cuit VARCHAR,
+    sucursal VARCHAR,
+    anio VARCHAR,
+    lat VARCHAR,
+    lon VARCHAR,
+    clae6 VARCHAR,
+    in_departamentos VARCHAR,
+    provincia_id VARCHAR,
+    quintil VARCHAR,
+    empleo VARCHAR, 
+    proporcion_mujeres VARCHAR
+);
+
+COPY temp_provincia
+    FROM '/datos/provincias.csv' DELIMITER ',' CSV HEADER;
+
+COPY temp_departamento
+    FROM '/datos/departamentos.csv' DELIMITER ',' CSV HEADER;
+
+COPY temp_actividades_establecimientos
+    FROM '/datos/actividades_establecimientos.csv' DELIMITER ',' CSV HEADER;
+
+COPY temp_distribucion_establecimientos
+    FROM '/datos/distribucion_establecimientos.csv' DELIMITER ',' CSV HEADER;
+
+
+
+INSERT INTO public.provincia(
+   id, nombre, nombre_completo, centroid_lat, centroid_lon, fuente, iso_id, iso_nombre, categoria 
+)
 SELECT
-    id::INTEGER,
-    nombre,
-    nombre_completo,
-    centroide_lat,
-    centroide_lon,
-    categoria
-FROM provincias_temp;
+id:: INTEGER,
+nombre,
+nombre_completo,
+centroid_lat:: DOUBLE PRECISION,
+centroid_lon:: DOUBLE PRECISION,
+fuente,
+iso_id,
+iso_nombre,
+categoria 
+FROM temp_provincia;
 
-COPY temp_departamentos
-FROM '/datos/departamentos.csv' DELIMITER ',' CSV HEADER;
 
-INSERT INTO
-    public.departamento (
-        id,
-        nombre,
-        nombre_completo,
-        centroide_lat,
-        centroide_lon,
-        categoria,
-        provincia_id
-    )
+
+INSERT INTO public.departamento(
+    id, nombre, provincia_id 
+)
 SELECT
-    id::INTEGER,
-    nombre,
-    nombre_completo,
-    centroide_lat,
-    centroide_lon,
-    categoria,
-    provincia_id::INTEGER
-FROM temp_departamentos;
+in_departamentos:: INTEGER,
+departamento,
+provincia_id:: INTEGER 
+FROM temp_departamento;
 
-COPY temp_dengue
-FROM '/datos/informacion-publica-dengue-zika-nacional-se-1-a-15-de-2024-2024-04-24.csv' DELIMITER ';' CSV HEADER;
 
-/*
-Cargo los datos en las tablas definitivas
-*/
-INSERT INTO
-    public.provincia (id, nombre)
-SELECT DISTINCT
-    id_prov_indec_residencia,
-    provincia_residencia
-FROM temp_dengue
-WHERE
-    id_prov_indec_residencia NOT IN (
-        SELECT id
-        FROM public.provincia
-    );
 
-INSERT INTO
-    public.departamento (id, nombre)
-SELECT DISTINCT
-    id_depto_indec_residencia,
-    departamento_residencia
-FROM temp_dengue
-WHERE
-    id_depto_indec_residencia NOT IN (
-        SELECT id
-        FROM public.departamento
-    );
-
-INSERT INTO
-    public.dengue (
-        evento,
-        anio,
-        grupo_etario,
-        cantidad,
-        departamento_id
-    )
+INSERT INTO public.actividades_establecimientos(
+    clae6, clae2, letra, clae6_desc, clae2_desc, letra_desc
+)
 SELECT
-    evento,
-    anio_min,
-    grupo_etario,
-    cantidad,
-    id_depto_indec_residencia
-FROM temp_dengue;
+clae6:: INTEGER,
+clae2:: INTEGER,
+letra,
+clae6_desc,
+clae2_desc,
+letra_desc
+FROM temp_actividades_establecimientos;
+
+
+
+INSERT INTO public.distribucion_establecimientos(
+    cuit,sucursal,anio,lat,lon,clae6,in_departamentos,provincia_id,quintil,empleo,proporcion_mujeres
+)
+SELECT
+cuit,
+sucursal:: INTEGER,
+anio:: INTEGER,
+lat:: DOUBLE PRECISION,
+lon:: DOUBLE PRECISION,
+clae6:: INTEGER,
+in_departamentos:: INTEGER,
+provincia_id:: INTEGER,
+quintil:: INTEGER,
+empleo,
+proporcion_mujeres:: DOUBLE PRECISION
+FROM temp_distribucion_establecimientos;
