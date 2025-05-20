@@ -5,10 +5,10 @@
 ![Apache Superset](https://img.shields.io/badge/Apache_Superset-FF5733?style=for-the-badge&logo=apache-superset&logoColor=white)
 ![pgAdmin](https://img.shields.io/badge/pgAdmin-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-## **Descripcion**
+## **Descripción**
 
 Este repositorio contiene los archivos para ejecutar un Repositorio docker con PostgreSQL, pgAdmin y Superset. El proyecto contiene datos de la Distribución geográfica de los establecimientos productivos. Esta información será cargada automaticamente a la base de datos durante su primera ejecución.
-La infomracion fue obtenida de: [Datos Argentina](https://datos.gob.ar)
+La información fue obtenida de: [Datos Argentina](https://datos.gob.ar)
 
 ## **Descarga de Datasets**
 
@@ -23,7 +23,7 @@ Este tutorial guía al usuario a través de los pasos necesarios para desplegar 
 
 1. Levantar los servicios con Docker.
 2. Configurar la conexión a la base de datos en Apache Superset.
-3. Ejecutar consultas SQL para analizar los datos de casos de dengue.
+3. Ejecutar consultas SQL para analizar los datos de establecimientos.
 4. Crear gráficos y tableros interactivos para la visualización de datos.
 
 ## **Palabras Clave**
@@ -50,12 +50,13 @@ Este proyecto implementa un proceso ETL (Extract, Transform, Load) para la carga
 El objetivo principal es proporcionar una solución escalable y reproducible para analizar datos de distribución geográfica de los establecimientos productivos por grupo departamento, provincia y tipo de actividad, permitiendo la creación de tableros interactivos y gráficos personalizados.
 
 ## **Diagrama E-R**
+![image](https://github.com/user-attachments/assets/fa72e172-f5b7-447a-aeca-4ae13b6b61ec)
 
 ## Diagrama de relaciones entre tablas
 Referencia:
 * Una provincia tiene muchos departamentos → relación 1:N
 * Una provincia tiene muchos establecimientos → relación 1:N
-* Un establecimiento tiene muchas actividades → también 1:N
+* Un establecimiento tiene muchas actividades → relación 1:N
 
 Significado:
 * 1 → un único registro en la tabla padre (ej. una provincia)
@@ -101,8 +102,8 @@ Significado:
     
 3. **actividades establecimientos**  
    - **Atributos:**  
-     - `clae6`: Identificador único de la provincia.  
-     - `clae2`: Nombre de la provincia.  
+     - `clae6`: Sector de actividad a seis dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)  
+     - `clae2`: Sector de actividad a dos dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)  
      - `clae6_desc`: Descripcion del sector de actividades  
      - `clae2_desc`: Descripcion del sector de actividades
      - `letra`: Sector de actividad a nivel de letra en base al Clasificador Nacional de Actividades Económicas (CLAE) 
@@ -207,9 +208,34 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 ### **2. Consultas SQL**
 
 #### **Consulta 1: Consultar tipo de actividades según departamento**
+```
+   SELECT provincia.nombre AS nombre_provincia, departamento.nombre AS nombre_departamento, clae6_desc
+   FROM public.distribucion_establecimientos
+   
+   INNER JOIN public.departamento
+   ON departamento.id = distribucion_establecimientos.in_departamentos
+   
+   INNER JOIN public.provincia 
+   ON provincia.id = distribucion_establecimientos.provincia_id
+   
+   INNER JOIN public.actividades_establecimientos
+   ON distribucion_establecimientos.clae6 = actividades_establecimientos.clae6;
+```
 #### **Consulta 2: Consultar proporcion de mujeres por actividad productiva**
+```
+   SELECT clae6_desc, 
+   ROUND(proporcion_mujeres*100) AS proporcion_mujeres
+   FROM public.distribucion_establecimientos
+   INNER JOIN public.actividades_establecimientos
+   ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+```
 #### **Consulta 3: Consultar rango de puestos de empleo por actividad productiva generalizada (CLAE2)**
-
+```
+   SELECT clae2_desc,empleo
+   FROM public.distribucion_establecimientos
+   INNER JOIN public.actividades_establecimientos
+   ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+```
 ### **3. Creación de Gráficos y Tableros**
 
 1. Ejecuta las consultas en ***`SQL Lab`*** de Apache Superset.
