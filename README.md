@@ -56,7 +56,7 @@ El objetivo principal es proporcionar una solución escalable y reproducible par
 Referencia:
 * Una provincia tiene muchos departamentos → relación 1:N
 * Una provincia tiene muchos establecimientos → relación 1:N
-* Un establecimiento tiene muchas actividades → también 1:N
+* Un establecimiento tiene muchas actividades → relación 1:N
 
 Significado:
 * 1 → un único registro en la tabla padre (ej. una provincia)
