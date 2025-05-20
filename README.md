@@ -61,43 +61,65 @@ Significado:
 * 1 → un único registro en la tabla padre (ej. una provincia)
 * N → muchos registros relacionados en la tabla hija (ej. varios departamentos en esa provincia)
 
-                         ┌───────────────┐
-                         │  provincia    │
-                         │───────────────│
-                         │ id (PK)       │◄────────────┐
-                         │ nombre        │             │
-                         │ ...           │             │
-                         └────┬──────────┘             │
-                              │                        │
-              ┌───────────────▼──────────────┐         │
-              │       departamento            │         │
-              │──────────────────────────────│         │
-              │ id (PK)                      │         │
-              │ nombre                       │         │
-              │ provincia_id (FK)────────────┘         │
-              └──────────────────────────────┘         │
-                                                       │
-                                                       │
-                                                       │
-                         ┌────────────────────┐        │
-                         │ actividades_estab. │        │
-                         │────────────────────│        │
-                         │ clae6 (PK)         │◄──────┐ │
-                         │ clae2              │       │ │
-                         │ letra              │       │ │
-                         └────────────────────┘       │ │
-                                                      │ │
-                                                      │ │
-         ┌────────────────────────────────────────────▼─▼──────────────────────────────────────┐
-         │                          distribucion_establecimientos                             │
-         │────────────────────────────────────────────────────────────────────────────────────│
-         │ cuit, sucursal, anio (PK)                                                          │
-         │ lat, lon                                                                           │
-         │ clae6 (FK)            ─────────────────────────────────────────────────────────────┘
-         │ in_departamentos (FK) → departamento(id)                                           │
-         │ provincia_id (FK)     → provincia(id)                                              │
-         │ empleo, quintil, proporcion_mujeres                                               │
-         └────────────────────────────────────────────────────────────────────────────────────┘
+## Diagrama de relaciones entre tablas (completo con atributos y relaciones)
+
+                         ┌────────────────────────────┐
+                         │         provincia          │
+                         │────────────────────────────│
+                         │ id (PK)                    │
+                         │ nombre                     │
+                         │ nombre_completo            │
+                         │ centroide_lat              │
+                         │ centroide_lon              │
+                         │ fuente                     │
+                         │ iso_id                     │
+                         │ iso_nombre                 │
+                         │ categoria                  │
+                         └──────────┬─────────────────┘
+                                    │
+                                    │ provincia_id (FK)
+                                    ▼
+                ┌──────────────────────────────────────────┐
+                │              departamento                │
+                │──────────────────────────────────────────│
+                │ id (PK)                                  │
+                │ nombre                                   │
+                │ provincia_id (FK) → provincia(id)        │
+                └──────────────────────────────────────────┘
+
+
+                         ┌─────────────────────────────────────────────┐
+                         │         actividades_establecimientos        │
+                         │─────────────────────────────────────────────│
+                         │ clae6 (PK)                                  │
+                         │ clae2                                       │
+                         │ letra                                       │
+                         │ clae6_desc                                  │
+                         │ clae2_desc                                  │
+                         │ letra_desc                                  │
+                         └──────────────┬──────────────────────────────┘
+                                        │
+                                        │ clae6 (FK)
+                                        |
+                                        |
+                                        ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                  distribucion_establecimientos                                                      │
+│──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
+│ cuit (PK)                                                                                                            │
+│ sucursal (PK)                                                                                                        │
+│ anio (PK)                                                                                                            │
+│ lat                                                                                                                 │
+│ lon                                                                                                                 │
+│ clae6 (FK) → actividades_establecimientos(clae6)                                                                    │
+│ in_departamentos (FK) → departamento(id)                                                                            │
+│ provincia_id (FK) → provincia(id)                                                                                   │
+│ quintil                                                                                                             │
+│ empleo                                                                                                              │
+│ proporcion_mujeres                                                                                                  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
 
 ### **Entidades y Atributos**
 
@@ -112,9 +134,9 @@ Significado:
      - `clae2`: Sector de actividad a dos dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)
      - `in_departamentos`: Código de departamento del Instituto Geográfico Nacional
      - `provincia_id`: Clave foránea que referencia a la provincia a la que pertenece el establecimiento.
-     - `quintil`: quintil de exportaciones de bienes en el que se ubica la empresa según el nivel de exportaciones del año en cuestión
-     - `empleo`: promedio de trabajadores 
-     - `proporcion_mujeres`: indica la cantidad de mujeres que trabajaron en el período analizado en esa sucursal sobre la totalidad de empleados
+     - `quintil`: Quintil de exportaciones de bienes en el que se ubica la empresa según el nivel de exportaciones del año en cuestión
+     - `empleo`: Promedio de trabajadores 
+     - `proporcion_mujeres`: Indica la cantidad de mujeres que trabajaron en el período analizado en esa sucursal sobre la totalidad de empleados
 
 2. **departamento**  
    - **Atributos:**  
@@ -221,12 +243,8 @@ El archivo `docker-compose.yml` define los siguientes servicios:
 3. **Levantar los servicios:**
    Ejecuta los siguientes comandos para iniciar los contenedores:
 
-   ```sh
-      docker compose up -d
-      . init.sh
-   ```
    ```bash
-     docker-compose up
+     docker-compose up -d
      docker exec -it superset_etl bash -C "/script.sh"
    ```
    
