@@ -104,30 +104,30 @@ El archivo `docker-compose.yml` define los siguientes servicios:
 2. **Configurar el archivo `.env.db`:**
    Crea un archivo `.env.db` en la raíz del proyecto con las siguientes variables de entorno:
    ```env
-    #Definimos cada variable
-    DATABASE_HOST=db
-    DATABASE_PORT=5432
-    DATABASE_NAME=postgres
-    DATABASE_USER=postgres
-    DATABASE_PASSWORD=postgres
-    POSTGRES_INITDB_ARGS="--auth-host=scram-sha-256 --auth-local=trust"
-    # Configuracion para inicializar postgres
-    POSTGRES_PASSWORD=postgres
-    PGUSER=postgres
-    # Configuracion para inicializar pgadmin
-    PGADMIN_DEFAULT_EMAIL=admin@ejemplo.com
-    PGADMIN_DEFAULT_PASSWORD=admin123
-    # Configuracion para inicializar superset
-    SUPERSET_SECRET_KEY=123456789
+   # Usuario Root
+   POSTGRES_PASSWORD=postgres
+   PGUSER=postgres
+
+   # Usuario pgAdmin
+   PGADMIN_EMAIL=admin@ejemplo.com
+   PGADMIN_PASSWORD=admin123
+   
+   # Superset
+   SUPERSET_SECRET_KEY=123456789
    ```
   
 3. **Levantar los servicios:**
    Ejecuta los siguientes comandos para iniciar los contenedores:
-   ```sh
-   docker compose up -d
-   . init.sh
-   ```
 
+   ```sh
+      docker compose up -d
+      . init.sh
+   ```
+   ```bash
+     docker-compose up
+     docker exec -it superset_etl bash -c "/script.sh"
+   ```
+   
 4. **Acceso a las herramientas:**
    - **Apache Superset:** [http://localhost:8088/](http://localhost:8088/)  
      Credenciales predeterminadas: ***`admin/admin`***
