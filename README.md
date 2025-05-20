@@ -102,8 +102,8 @@ Significado:
     
 3. **actividades establecimientos**  
    - **Atributos:**  
-     - `clae6`: Identificador único de la provincia.  
-     - `clae2`: Nombre de la provincia.  
+     - `clae6`: Sector de actividad a seis dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)  
+     - `clae2`: Sector de actividad a dos dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)  
      - `clae6_desc`: Descripcion del sector de actividades  
      - `clae2_desc`: Descripcion del sector de actividades
      - `letra`: Sector de actividad a nivel de letra en base al Clasificador Nacional de Actividades Económicas (CLAE) 
