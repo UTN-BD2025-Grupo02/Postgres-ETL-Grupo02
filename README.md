@@ -5,6 +5,11 @@
 ![Apache Superset](https://img.shields.io/badge/Apache_Superset-FF5733?style=for-the-badge&logo=apache-superset&logoColor=white)
 ![pgAdmin](https://img.shields.io/badge/pgAdmin-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
+## **Descripcion**
+
+Este repositorio contiene los archivos para ejecutar un Repositorio docker con PostgreSQL, pgAdmin y Superset. El proyecto contiene datos de la Distribución geográfica de los establecimientos productivos. Esta información será cargada automaticamente a la base de datos durante su primera ejecución.
+La infomracion fue obtenida de: [Datos Argentina](https://datos.gob.ar)
+
 ## **Descarga de Datasets**
 
 Los datasets utilizados en este proyecto pueden descargarse desde el portal oficial de datos abiertos del gobierno de Argentina:  
@@ -43,6 +48,103 @@ El código proporcionado se ofrece "tal cual", sin garantía de ningún tipo, ex
 Este proyecto implementa un proceso ETL (Extract, Transform, Load) para la carga y análisis de datos relacionados con la Distribución geográfica de los establecimientos productivos en Argentina. Utiliza herramientas modernas como Docker, PostgreSQL, Apache Superset y pgAdmin para facilitar la gestión, análisis y visualización de datos.
 
 El objetivo principal es proporcionar una solución escalable y reproducible para analizar datos de distribución geográfica de los establecimientos productivos por grupo departamento, provincia y tipo de actividad, permitiendo la creación de tableros interactivos y gráficos personalizados.
+
+## **Diagrama E-R**
+
+## Diagrama de relaciones entre tablas
+Referencia:
+* Una provincia tiene muchos departamentos → relación 1:N
+* Una provincia tiene muchos establecimientos → relación 1:N
+* Un establecimiento tiene muchas actividades → también 1:N
+
+Significado:
+* 1 → un único registro en la tabla padre (ej. una provincia)
+* N → muchos registros relacionados en la tabla hija (ej. varios departamentos en esa provincia)
+
+                         ┌───────────────┐
+                         │  provincia    │
+                         │───────────────│
+                         │ id (PK)       │◄────────────┐
+                         │ nombre        │             │
+                         │ ...           │             │
+                         └────┬──────────┘             │
+                              │                        │
+              ┌───────────────▼──────────────┐         │
+              │       departamento            │         │
+              │──────────────────────────────│         │
+              │ id (PK)                      │         │
+              │ nombre                       │         │
+              │ provincia_id (FK)────────────┘         │
+              └──────────────────────────────┘         │
+                                                       │
+                                                       │
+                                                       │
+                         ┌────────────────────┐        │
+                         │ actividades_estab. │        │
+                         │────────────────────│        │
+                         │ clae6 (PK)         │◄──────┐ │
+                         │ clae2              │       │ │
+                         │ letra              │       │ │
+                         └────────────────────┘       │ │
+                                                      │ │
+                                                      │ │
+         ┌────────────────────────────────────────────▼─▼──────────────────────────────────────┐
+         │                          distribucion_establecimientos                             │
+         │────────────────────────────────────────────────────────────────────────────────────│
+         │ cuit, sucursal, anio (PK)                                                          │
+         │ lat, lon                                                                           │
+         │ clae6 (FK)            ─────────────────────────────────────────────────────────────┘
+         │ in_departamentos (FK) → departamento(id)                                           │
+         │ provincia_id (FK)     → provincia(id)                                              │
+         │ empleo, quintil, proporcion_mujeres                                               │
+         └────────────────────────────────────────────────────────────────────────────────────┘
+
+### **Entidades y Atributos**
+
+1. **distribucion establecimientos**  
+   - **Atributos:**  
+     - `cuit`: Identificador único del registro.  
+     - `sucursal`: Indicador único por sucursal de cada cuit
+     - `anio`: Año al que refiere la información del establecimiento en cuestión
+     - `lat`: Coordenadas geográficas
+     - `lon`: Coordenadas geográficas  
+     - `clae6`: Sector de actividad a seis dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)
+     - `clae2`: Sector de actividad a dos dígitos en base al Clasificador Nacional de Actividades Económicas (CLAE)
+     - `in_departamentos`: Código de departamento del Instituto Geográfico Nacional
+     - `provincia_id`: Clave foránea que referencia a la provincia a la que pertenece el establecimiento.
+     - `quintil`: quintil de exportaciones de bienes en el que se ubica la empresa según el nivel de exportaciones del año en cuestión
+     - `empleo`: promedio de trabajadores 
+     - `proporcion_mujeres`: indica la cantidad de mujeres que trabajaron en el período analizado en esa sucursal sobre la totalidad de empleados
+
+2. **departamento**  
+   - **Atributos:**  
+     - `id`: Identificador único del departamento.  
+     - `nombre`: Nombre del departamento.  
+     - `provincia_id`: Clave foránea que referencia a la provincia a la que pertenece el departamento.  
+
+3. **provincia**  
+   - **Atributos:**  
+     - `id`: Identificador único de la provincia.  
+     - `nombre`: Nombre de la provincia.  
+     - `nombre_completo`: Nombre completo de la provincia.  
+     - `centroide_lat`: Latitud del centroide de la provincia.  
+     - `centroide_lon`: Longitud del centroide de la provincia.  
+     - `categoria`: Categoría administrativa de la provincia.
+     - `iso_id`: Id que le brinda la ISO
+     - `iso_nombre`: Nombre que le brinda la ISO
+    
+3. **actividades establecimientos**  
+   - **Atributos:**  
+     - `clae6`: Identificador único de la provincia.  
+     - `clae2`: Nombre de la provincia.  
+     - `clae6_desc`: Descripcion del sector de actividades  
+     - `clae2_desc`: Descripcion del sector de actividades
+     - `letra`: Sector de actividad a nivel de letra en base al Clasificador Nacional de Actividades Económicas (CLAE) 
+
+## Descripcion del modelo
+
+El modelo de datos está compuesto por 4 entidades principales: `provincia`, `departamento`, `distribucion_establecimientos` y `actividades_establecimiento`. Estas entidades están relacionadas para representar la estructura jerárquica de los datos geográficos y epidemiológicos.
+
 
 ## **Características Principales**
 
@@ -125,7 +227,7 @@ El archivo `docker-compose.yml` define los siguientes servicios:
    ```
    ```bash
      docker-compose up
-     docker exec -it superset_etl bash -c "/script.sh"
+     docker exec -it superset_etl bash -C "/script.sh"
    ```
    
 4. **Acceso a las herramientas:**
@@ -142,12 +244,21 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 
 ### **2. Consultas SQL**
 
-#### **Consulta 1: Tipo de actividades según departamento**
-1. buscar en departamento el id provincia
-2. en otra tabla, buscar el in_departamento de la provicnia anterior
-3. ver que coincida la cla2 y clae6 de la tabla anterior
-#### **Consulta 2: Consultar proporcioón mujeres**
-#### **Consulta 3: 
+#### **Consulta 1: Consultar tipo de actividades según departamento**
+#### **Consulta 2: Consultar proporcion de mujeres por actividad productiva**
+#### **Consulta 3: Consultar rango de puestos de empleo por actividad productiva generalizada (CLAE2)**
+
+### **3. Creación de Gráficos y Tableros**
+
+1. Ejecuta las consultas en ***`SQL Lab`*** de Apache Superset.
+2. Haz clic en el botón ***`CREATE CHART`*** para crear gráficos interactivos.
+3. Configura el tipo de gráfico y las dimensiones necesarias.
+4. Guarda el gráfico en un tablero con el botón ***`SAVE`***.
+
+Se recomiendan los siguientes graficos:
+tipo de actividades según departamento -> `Grap Chart`
+rango de puestos de empleo por actividad productiva -> `Bar Chart`
+proporcion de mujeres por actividad productiva -> Pie Chart``
 
 
 
@@ -160,29 +271,6 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 
 
 
-Este repositorio contiene los archivos para ejecutar un Repositorio docker con PostgreSQL, pgAdmin y Superset. El proyecto contiene datos de la Distribución geográfica de los establecimientos productivos. Esta información será cargada automaticamente a la base de datos durante su primera ejecución.
-La infomracion fue obtenida de: [Datos Argentina](https://datos.gob.ar)
-## Variables de entorno
 
-Antes de la primer ejecucion, deberá crear un archivo .env en la carpeta raiz del proyecto con los siguientes datos:
 
-### Variables de Postgres
-`POSTGRES_USER`
-
-`POSTGRES_PASSWORD`
-
-### Variables de pgAdmin
-`PGADMIN_EMAIL`
-
-`PGADMIN_PASSWORD`
-
-### Variables de Superset
-`SUPERSET_SECRET_KEY`
-
-## Primera Ejecución
-Luego de configurar el archivo .env ejecute los siguientes comandos
-```bash
-  docker-compose up
-  docker exec -it superset_etl bash -c "/script.sh"
-```
 
