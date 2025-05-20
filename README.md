@@ -255,7 +255,7 @@ Se recomiendan los siguientes graficos:
 - tipo de actividades según departamento -> `Grap Chart`
 - rango de puestos de empleo por actividad productiva -> `Bar Chart`
 - proporcion de mujeres por actividad productiva -> `Pie Chart`
-> **Nota**: Se propone un mapa parcial de la ubicacion de los establecimientos productivos con la longitud y latitud que ofrece el mismo dataset. Usamos el grafico `decl.gl Scatterplot`
+- ubicación de los establecimientos -> `decl.gl Scatterplot`
 
 
 
