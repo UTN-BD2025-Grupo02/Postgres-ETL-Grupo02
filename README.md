@@ -223,11 +223,24 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 ```
 #### **Consulta 2: Consultar proporcion de mujeres por actividad productiva**
 ```
-   SELECT clae6_desc, 
-   ROUND(proporcion_mujeres*100) AS proporcion_mujeres
-   FROM public.distribucion_establecimientos
-   INNER JOIN public.actividades_establecimientos
-   ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+   SELECT 
+  clae6_desc,
+  'Mujeres' AS genero,
+  ROUND(proporcion_mujeres * 100) AS porcentaje
+FROM public.distribucion_establecimientos
+INNER JOIN public.actividades_establecimientos
+  ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6
+
+UNION ALL
+
+SELECT 
+  clae6_desc,
+  'Hombres' AS genero,
+  ROUND((1 - proporcion_mujeres) * 100) AS porcentaje
+FROM public.distribucion_establecimientos
+INNER JOIN public.actividades_establecimientos
+  ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+
 ```
 #### **Consulta 3: Consultar rango de puestos de empleo por actividad productiva generalizada (CLAE2)**
 ```
