@@ -256,9 +256,9 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 4. Guarda el gráfico en un tablero con el botón ***`SAVE`***.
 
 Se recomiendan los siguientes graficos:
-tipo de actividades según departamento -> `Grap Chart`
-rango de puestos de empleo por actividad productiva -> `Bar Chart`
-proporcion de mujeres por actividad productiva -> Pie Chart``
+- tipo de actividades según departamento -> `Grap Chart`
+- rango de puestos de empleo por actividad productiva -> `Bar Chart`
+- proporcion de mujeres por actividad productiva -> `Pie Chart`
 
 
 
