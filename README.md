@@ -221,7 +221,7 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
    INNER JOIN public.actividades_establecimientos
    ON distribucion_establecimientos.clae6 = actividades_establecimientos.clae6;
 ```
-#### **Consulta 2: Consultar proporcion de mujeres por actividad productiva**
+#### **Consulta 2: Consultar proporcion de género por actividad productiva**
 ```
    SELECT 
   clae6_desc,
