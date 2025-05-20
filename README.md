@@ -208,9 +208,34 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
 ### **2. Consultas SQL**
 
 #### **Consulta 1: Consultar tipo de actividades según departamento**
+```
+   SELECT provincia.nombre AS nombre_provincia, departamento.nombre AS nombre_departamento, clae6_desc
+   FROM public.distribucion_establecimientos
+   
+   INNER JOIN public.departamento
+   ON departamento.id = distribucion_establecimientos.in_departamentos
+   
+   INNER JOIN public.provincia 
+   ON provincia.id = distribucion_establecimientos.provincia_id
+   
+   INNER JOIN public.actividades_establecimientos
+   ON distribucion_establecimientos.clae6 = actividades_establecimientos.clae6;
+```
 #### **Consulta 2: Consultar proporcion de mujeres por actividad productiva**
+```
+   SELECT clae6_desc, 
+   ROUND(proporcion_mujeres*100) AS proporcion_mujeres
+   FROM public.distribucion_establecimientos
+   INNER JOIN public.actividades_establecimientos
+   ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+```
 #### **Consulta 3: Consultar rango de puestos de empleo por actividad productiva generalizada (CLAE2)**
-
+```
+   SELECT clae2_desc,empleo
+   FROM public.distribucion_establecimientos
+   INNER JOIN public.actividades_establecimientos
+   ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
+```
 ### **3. Creación de Gráficos y Tableros**
 
 1. Ejecuta las consultas en ***`SQL Lab`*** de Apache Superset.
