@@ -23,7 +23,7 @@ Este tutorial guía al usuario a través de los pasos necesarios para desplegar 
 
 1. Levantar los servicios con Docker.
 2. Configurar la conexión a la base de datos en Apache Superset.
-3. Ejecutar consultas SQL para analizar los datos de casos de dengue.
+3. Ejecutar consultas SQL para analizar los datos de establecimientos.
 4. Crear gráficos y tableros interactivos para la visualización de datos.
 
 ## **Palabras Clave**
