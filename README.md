@@ -5,10 +5,10 @@
 ![Apache Superset](https://img.shields.io/badge/Apache_Superset-FF5733?style=for-the-badge&logo=apache-superset&logoColor=white)
 ![pgAdmin](https://img.shields.io/badge/pgAdmin-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-## **Descripcion**
+## **Descripción**
 
 Este repositorio contiene los archivos para ejecutar un Repositorio docker con PostgreSQL, pgAdmin y Superset. El proyecto contiene datos de la Distribución geográfica de los establecimientos productivos. Esta información será cargada automaticamente a la base de datos durante su primera ejecución.
-La infomracion fue obtenida de: [Datos Argentina](https://datos.gob.ar)
+La información fue obtenida de: [Datos Argentina](https://datos.gob.ar)
 
 ## **Descarga de Datasets**
 
