@@ -63,62 +63,6 @@ Significado:
 
 ## Diagrama de relaciones entre tablas (completo con atributos y relaciones)
 
-                         ┌────────────────────────────┐
-                         │         provincia          │
-                         │────────────────────────────│
-                         │ id (PK)                    │
-                         │ nombre                     │
-                         │ nombre_completo            │
-                         │ centroide_lat              │
-                         │ centroide_lon              │
-                         │ fuente                     │
-                         │ iso_id                     │
-                         │ iso_nombre                 │
-                         │ categoria                  │
-                         └──────────┬─────────────────┘
-                                    │
-                                    │ provincia_id (FK)
-                                    ▼
-                ┌──────────────────────────────────────────┐
-                │              departamento                │
-                │──────────────────────────────────────────│
-                │ id (PK)                                  │
-                │ nombre                                   │
-                │ provincia_id (FK) → provincia(id)        │
-                └──────────────────────────────────────────┘
-
-
-                         ┌─────────────────────────────────────────────┐
-                         │         actividades_establecimientos        │
-                         │─────────────────────────────────────────────│
-                         │ clae6 (PK)                                  │
-                         │ clae2                                       │
-                         │ letra                                       │
-                         │ clae6_desc                                  │
-                         │ clae2_desc                                  │
-                         │ letra_desc                                  │
-                         └──────────────┬──────────────────────────────┘
-                                        │
-                                        │ clae6 (FK)
-                                        |
-                                        |
-                                        ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                  distribucion_establecimientos                                                      │
-│──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
-│ cuit (PK)                                                                                                            │
-│ sucursal (PK)                                                                                                        │
-│ anio (PK)                                                                                                            │
-│ lat                                                                                                                 │
-│ lon                                                                                                                 │
-│ clae6 (FK) → actividades_establecimientos(clae6)                                                                    │
-│ in_departamentos (FK) → departamento(id)                                                                            │
-│ provincia_id (FK) → provincia(id)                                                                                   │
-│ quintil                                                                                                             │
-│ empleo                                                                                                              │
-│ proporcion_mujeres                                                                                                  │
-└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-
 
 
 ### **Entidades y Atributos**
