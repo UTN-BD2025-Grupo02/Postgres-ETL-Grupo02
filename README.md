@@ -103,7 +103,7 @@ Significado:
 
 1. **distribucion establecimientos**  
    - **Atributos:**  
-     - `cuit`: Identificador único del registro.  
+     - `cuit`: Identificador único del registro
      - `sucursal`: Indicador único por sucursal de cada cuit
      - `anio`: Año al que refiere la información del establecimiento en cuestión
      - `lat`: Coordenadas geográficas
@@ -259,7 +259,7 @@ Se recomiendan los siguientes graficos:
 - tipo de actividades según departamento -> `Grap Chart`
 - rango de puestos de empleo por actividad productiva -> `Bar Chart`
 - proporcion de mujeres por actividad productiva -> `Pie Chart`
-
+> **Nota**: Se propone un mapa parcial de la ubicacion de los establecimientos productivos con la longitud y latitud que ofrece el mismo dataset. Usamos el grafico `decl.gl Scatterplot`
 
 
 
