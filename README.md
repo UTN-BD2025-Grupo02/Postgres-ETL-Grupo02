@@ -50,6 +50,7 @@ Este proyecto implementa un proceso ETL (Extract, Transform, Load) para la carga
 El objetivo principal es proporcionar una solución escalable y reproducible para analizar datos de distribución geográfica de los establecimientos productivos por grupo departamento, provincia y tipo de actividad, permitiendo la creación de tableros interactivos y gráficos personalizados.
 
 ## **Diagrama E-R**
+![image](https://github.com/user-attachments/assets/fa72e172-f5b7-447a-aeca-4ae13b6b61ec)
 
 ## Diagrama de relaciones entre tablas
 Referencia:
