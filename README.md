@@ -236,6 +236,14 @@ Accede a Apache Superset y crea una conexión a la base de datos PostgreSQL en l
    INNER JOIN public.actividades_establecimientos
    ON actividades_establecimientos.clae6 = distribucion_establecimientos.clae6;
 ```
+#### **Consulta 4: Consultar ubicación de los establecimientos**
+```
+SELECT nombre, lon , lat
+FROM public.distribucion_establecimientos
+INNER JOIN public.provincia
+ON distribucion_establecimientos.provincia_id = provincia.id;
+```
+
 ### **3. Creación de Gráficos y Tableros**
 
 1. Ejecuta las consultas en ***`SQL Lab`*** de Apache Superset.
