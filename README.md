@@ -6,16 +6,13 @@
 ![pgAdmin](https://img.shields.io/badge/pgAdmin-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 ## **Descripción**
-
+Una biblioteca necesita disponer de una base de datos para llevar la gestión de sus préstamos. La base de datos deberá almacenar los siguientes datos sobre los lectores: un identificador de lector, su nombre, ciudad en la que vive, tipo de libros que le gustan leer y el número de habitantes de su ciudad (para elaborar posibles estadísticas). Por su parte, sobre los libros de la biblioteca se debe registrar el código del libro, título, tipo de libro (drama, comedia, terror, romántico, aventuras, biografía, etc.); y lo más importante, la biblioteca debe conocer en todo momento qué libro está prestado y a quién, así como la fecha de realización y devolución del préstamo.
 Este repositorio contiene los archivos para ejecutar un Repositorio docker con PostgreSQL, pgAdmin y Superset. El proyecto contiene datos de la Distribución geográfica de los establecimientos productivos. Esta información será cargada automaticamente a la base de datos durante su primera ejecución.
-La información fue obtenida de: [Datos Argentina](https://datos.gob.ar)
 
-## **Descarga de Datasets**
 
-Los datasets utilizados en este proyecto pueden descargarse desde el portal oficial de datos abiertos del gobierno de Argentina:  
-[https://datos.gob.ar/dataset](https://datos.gob.ar/dataset)
+## **Diagrama Entidad Relación**
 
-Este portal proporciona información pública en formatos reutilizables, incluyendo datos relacionados con la Distribución geográfica de los establecimientos productivos en Argentina.
+![image](https://github.com/user-attachments/assets/64dc6dc2-5d1b-4331-94ca-b48dfde0a84a)
 
 ## **Resumen del Tutorial**
 
